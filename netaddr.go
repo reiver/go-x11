@@ -1,0 +1,420 @@
+package x11
+
+import (
+	"fmt"
+	"os"
+	"regexp"
+	"strconv"
+)
+
+const (
+	envKey = "DISPLAY"
+)
+
+var (
+	displayRegex = regexp.MustCompilePOSIX("^([^:]*):([0-9]+)(.([0-9]*))?$")
+)
+
+// DisplayNetAddr retrieves the $DISPLAY environment variable, and returns the corresponding ‘network’ and ‘address’,
+// that could be used in a call to the "net" package's net.Dial() func, for the X11 client to connect to the X11 server.
+//
+// With X11, there are clients and servers.
+//
+// A X11 server is what displays images to the screen or monitor, and is communicating with the graphics hardware.
+// There is usually only one X11 server runnig on a computer. And often the X11 server is automatically started when
+// the computer is started.
+//
+// It is probably easiest to think of an X11 client as an application. An X11 client communicates with the X11 server,
+// and asks it (for example) to create a window, display an image, draw various graphics, etc. The X11 client tells
+// the X11 server what to display and draw.
+//
+// With X11, before an X11 client connects to an X11 server, it looks at the $DISPLAY environment variable, to determine
+// where the server is.
+//
+//
+// Example Usage
+//
+// This is how one might use DisplayNetAddr:
+//
+//	network, address, err := x11.DisplayNetAddr()
+//	if nil != err {
+//		return err
+//	}
+//	
+//	conn, err := net.Dial(network, address)
+//
+// However, note that most people will probably not call DisplayNetAddr directly themselves, but instead will use this package's xll.Dial() func:
+//
+//	conn, err := x11.Dial()
+//
+//
+// Format
+//
+// Although not necessary to know to use DisplayNetAddr, the $DISPLAY environment variable can appear in these format:
+//
+// • :display
+//
+// • :display.screen
+//
+// • host:display
+//
+// • host:display.screen
+//
+// So, effectively, ‘display’ is mandatory, and ‘host’ and ‘screen’ are optional.
+//
+// With these formats:....
+//
+// • ‘display’ is an integer that can range from 0 (zero) to 59,535 (= the maximum TCP port number (i.e., 65,535) minus 6,000);
+//
+// • ‘host’ can be “unix”, an IP address, or a domain name;
+//
+// • ‘screen’ can be 0 (zero) or any positive integer; (the author is not actually sure if or what the maximum value for ‘screen’ is); and
+//
+// Some examples of the :display format are:
+//
+//	:0
+//
+//	:1
+//
+//	:2
+//
+//	:13
+//
+//	:32884
+//
+// Some examples of the :display.screen format are:
+//
+//	:0.0
+//
+//	:1.0
+//
+//	:2.0
+//
+//	:13.0
+//
+//	:32884.0
+//
+// And also:
+//
+//	:0.1
+//
+//	:1.1
+//
+//	:2.1
+//
+//	:13.1
+//
+//	:32884.1
+//
+// And also:
+//
+//	:0.5
+//
+//	:1.5
+//
+//	:2.5
+//
+//	:13.5
+//
+//	:32884.5
+//
+// And also:
+//
+//	:0.4528
+//
+//	:1.4528
+//
+//	:2.4528
+//
+//	:13.4528
+//
+//	:32884.4528
+//
+// Some examples of the host:display format, where the ‘host’ is “unix” are:
+//
+//	unix:0
+//
+//	unix:1
+//
+//	unix:2
+//
+//	unix:13
+//
+//	unix:32884
+//
+// Some examples of the host:display format, where the ‘host’ is an IP address are:
+//
+//	127.0.0.1:0
+//
+//	127.0.0.1:1
+//
+//	127.0.0.1:2
+//
+//	127.0.0.1:13
+//
+//	127.0.0.1:32884
+//
+// And also:
+//
+//	93.184.216.34:0
+//
+//	93.184.216.34:1
+//
+//	93.184.216.34:2
+//
+//	93.184.216.34:13
+//
+//	93.184.216.34:32884
+//
+// Some examples of the host:display format, where the ‘host’ is a domain name are:
+//
+//	example.com:0
+//
+//	example.com:1
+//
+//	example.com:2
+//
+//	example.com:13
+//
+//	example.com:32884
+//
+// Some examples of the host:display.screen format, where the ‘host’ is “unix” are:
+//
+//	unix:0.0
+//
+//	unix:1.0
+//
+//	unix:2.0
+//
+//	unix:13.0
+//
+//	unix:32884.0
+//
+// And also:
+//
+//	unix:0.1
+//
+//	unix:1.1
+//
+//	unix:2.1
+//
+//	unix:13.1
+//
+//	unix:32884.1
+//
+// And also:
+//
+//	unix:0.5
+//
+//	unix:1.5
+//
+//	unix:2.5
+//
+//	unix:13.5
+//
+//	unix:32884.5
+//
+// And also:
+//
+//	unix:0.4528
+//
+//	unix:1.4528
+//
+//	unix:2.4528
+//
+//	unix:13.4528
+//
+//	unix:32884.4528
+//
+// Some examples of the host:display.screen format, where the ‘host’ is an IP address are:
+//
+//	127.0.0.1:0.0
+//
+//	127.0.0.1:1.0
+//
+//	127.0.0.1:2.0
+//
+//	127.0.0.1:13.0
+//
+//	127.0.0.1:32884.0
+//
+// And also:
+//
+//	127.0.0.1:0.1
+//
+//	127.0.0.1:1.1
+//
+//	127.0.0.1:2.1
+//
+//	127.0.0.1:13.1
+//
+//	127.0.0.1:32884.1
+//
+// And also:
+//
+//	127.0.0.1:0.5
+//
+//	127.0.0.1:1.5
+//
+//	127.0.0.1:2.5
+//
+//	127.0.0.1:13.5
+//
+//	127.0.0.1:32884.5
+//
+// And also:
+//
+//	127.0.0.1:0.4528
+//
+//	127.0.0.1:1.4528
+//
+//	127.0.0.1:2.4528
+//
+//	127.0.0.1:13.4528
+//
+//	127.0.0.1:32884.4528
+//
+// And also:
+//
+//	93.184.216.34:0.0
+//
+//	93.184.216.34:1.0
+//
+//	93.184.216.34:2.0
+//
+//	93.184.216.34:13.0
+//
+//	93.184.216.34:32884.0
+//
+// And also:
+//
+//	93.184.216.34:0.1
+//
+//	93.184.216.34:1.1
+//
+//	93.184.216.34:2.1
+//
+//	93.184.216.34:13.1
+//
+//	93.184.216.34:32884.1
+//
+// And also:
+//
+//	93.184.216.34:0.5
+//
+//	93.184.216.34:1.5
+//
+//	93.184.216.34:2.5
+//
+//	93.184.216.34:13.5
+//
+//	93.184.216.34:32884.5
+//
+// And also:
+//
+//	93.184.216.34:0.4528
+//
+//	93.184.216.34:1.4528
+//
+//	93.184.216.34:2.4528
+//
+//	93.184.216.34:13.4528
+//
+//	93.184.216.34:32884.4528
+//
+// Some examples of the host:display.screen format, where the ‘host’ is a domain name are:
+//
+//	example.com:0.0
+//
+//	example.com:1.0
+//
+//	example.com:2.0
+//
+//	example.com:13.0
+//
+//	example.com:32884.0
+//
+// And also:
+//
+//	example.com:0.1
+//
+//	example.com:1.1
+//
+//	example.com:2.1
+//
+//	example.com:13.1
+//
+//	example.com:32884.1
+//
+// And also:
+//
+//	example.com:0.5
+//
+//	example.com:1.5
+//
+//	example.com:2.5
+//
+//	example.com:13.5
+//
+//	example.com:32884.5
+//
+// And also:
+//
+//	example.com:0.4528
+//
+//	example.com:1.4528
+//
+//	example.com:2.4528
+//
+//	example.com:13.4528
+//
+//	example.com:32884.4528
+func DisplayNetAddr() (string, string, error) {
+
+	envValue := os.Getenv(envKey)
+
+	return displaynetaddr(envValue)
+}
+
+func displaynetaddr(value string) (string, string, error) {
+
+	if "" == value {
+		return "", "", fmt.Errorf("x11: Problem with $%s environment variable: either not set or value is empty: %q", envKey, value)
+	}
+
+	matches := displayRegex.FindStringSubmatch(value)
+	if nil == matches {
+		return "", "", fmt.Errorf("x11: Problem with $%s environment variable: it is not in the expected format, it is: %q", envKey, value)
+
+	}
+	if 5 != len(matches) {
+		return "", "", fmt.Errorf("x11: Problem parsing $%s environment variable: internal error.", envKey)
+	}
+
+	host    := matches[1]
+	display := matches[2]
+	screen  := matches[4]
+
+	if "" == screen {
+		screen = "0"
+	}
+//@TODO: We never actually do anything with screen!
+
+	switch host {
+	case "","unix":
+		addr := fmt.Sprintf("/tmp/.X11-unix/X%s", display)
+
+		return "unix", addr, nil
+	default:
+		displayUint64, err := strconv.ParseUint(display, 10, 64)
+		if nil != err {
+			return "", "", fmt.Errorf("x11: Problem parsing display number in $%s environment variable: %s", err)
+		}
+
+		var port uint64 = 6000 + displayUint64
+
+		addr := fmt.Sprintf("%s:%d", host, port)
+
+		return "tcp", addr, nil
+	}
+}
