@@ -3102,6 +3102,265 @@ func TestDisplayNetAddr(t *testing.T) {
 				ExpectedNet  string
 				ExpectedAddr string
 			}{
+				Value: fmt.Sprintf("unix:%d", n),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(999)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf("unix:%d", n),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(9999)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf("unix:%d", n),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(99999)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf("unix:%d", n),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(999999)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf("unix:%d", n),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(9999999)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf("unix:%d", n),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(99999999999999)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf("unix:%d", n),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+	}
+
+
+	{
+		randomness := rand.New(rand.NewSource( time.Now().UTC().UnixNano() ))
+
+		const max = 20
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(99)
+			m := randomness.Int63n(99)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf(":%d.%d", n, m),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(999)
+			m := randomness.Int63n(99)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf(":%d.%d", n, m),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(9999)
+			m := randomness.Int63n(99)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf(":%d.%d", n, m),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(99999)
+			m := randomness.Int63n(99)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf(":%d.%d", n, m),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(999999)
+			m := randomness.Int63n(99)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf(":%d.%d", n, m),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(9999999)
+			m := randomness.Int63n(99)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf(":%d.%d", n, m),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(99999999999999)
+			m := randomness.Int63n(99)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
+				Value: fmt.Sprintf(":%d.%d", n, m),
+				ExpectedNet: "unix",
+				ExpectedAddr: fmt.Sprintf("/tmp/.X11-unix/X%d", n),
+			}
+
+			tests = append(tests, test)
+		}
+	}
+
+
+	{
+		randomness := rand.New(rand.NewSource( time.Now().UTC().UnixNano() ))
+
+		const max = 20
+
+		for i:=0; i<max; i++ {
+
+			n := randomness.Int63n(99)
+
+			test := struct{
+				Value        string
+				ExpectedNet  string
+				ExpectedAddr string
+			}{
 				Value: fmt.Sprintf("127.0.0.1:%d", n),
 				ExpectedNet: "tcp",
 				ExpectedAddr: fmt.Sprintf("127.0.0.1:%d", 6000+n),
