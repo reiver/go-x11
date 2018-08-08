@@ -66,9 +66,9 @@ var (
 //
 // • ‘display’ is an integer that can range from 0 (zero) to 59,535 (= the maximum TCP port number (i.e., 65,535) minus 6,000);
 //
-// • ‘host’ can be “unix”, an IP address, or a domain name;
+// • ‘host’ can be (left out, or) “unix”, or an IP address, or a domain name;
 //
-// • ‘screen’ can be 0 (zero) or any positive integer; (the author is not actually sure if or what the maximum value for ‘screen’ is); and
+// • ‘screen’ can be (left out, or) 0 (zero) or any positive integer; (the author is not actually sure if or what the maximum value for ‘screen’ is); and
 //
 // Some examples of the :display format are:
 //
@@ -369,7 +369,93 @@ var (
 //	example.com:13.4528
 //
 //	example.com:32884.4528
-func DisplayNetAddr() (net string, addr string, err error) {
+//
+//
+// Interpretation
+//
+// If ‘host’ is left out, or it is “unix”, then then ‘network’ will be “unix”.
+// (I.e., a Unix domain socket used or IPC socket.)
+//
+// Else, ‘host’ is interpreted as a domain name or an IP address.
+//
+// If ‘screen’ is left out, then it defaults to “0”.
+//
+// The value for ‘display’ is mandatory, and cannot be left out. (Leaving it out will cause DisplayNetAddr to return a error.)
+//
+//
+// Unix Domain Socket
+//
+// If ‘host’ is left out or “unix”, such as with:
+//
+//	:0
+//
+//	:0.0
+//
+//	unix:0
+//
+//	unix:0.0
+//
+//	:1
+//
+//	:1.42
+//
+//	unix:1
+//
+//	unix:1.42
+//
+//	:2
+//
+//	:2.42
+//
+//	unix:2
+//
+//	unix:2.42
+//
+//	:13
+//
+//	:13.42
+//
+//	unix:13
+//
+//	unix:13.42
+//
+//	:4528
+//
+//	:4528.42
+//
+//	unix:4528
+//
+//	unix:4528.42
+//
+// … then the returned ‘address’ will be of the format:
+//
+//	/tmp/.X11-unix/X<display>
+//
+// So if ‘display’ is “0”, then the returns ‘address’ will be :
+//
+//	/tmp/.X11-unix/X0
+//
+// If ‘display’ is “1”, then the returns ‘address’ will be :
+//
+//	/tmp/.X11-unix/X1
+//
+// If ‘display’ is “2”, then the returns ‘address’ will be :
+//
+//	/tmp/.X11-unix/X2
+//
+// If ‘display’ is “13”, then the returns ‘address’ will be :
+//
+//	/tmp/.X11-unix/X13
+//
+// If ‘display’ is “4528”, then the returns ‘address’ will be :
+//
+//	/tmp/.X11-unix/X4528
+//
+// These are all paths to a Unix domain socket, in the local file system.
+// (Remember, in Unix and Linux, “everything is a file”. Well… “everything is a file [or a process]” 🙂)
+//
+// And in these situations, the X11 client will connect to this Unix domain socket to communicate with the X11 server.
+func DisplayNetAddr() (network string, address string, err error) {
 
 	envValue := os.Getenv(envKey)
 
