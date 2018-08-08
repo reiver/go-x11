@@ -60,7 +60,26 @@ var (
 //	conn, err := x11.Dial()
 //
 //
-// Format
+// $DISPLAY Environment Variable
+//
+// Although not necessary to know to use DisplayNetAddr, to see what the value of the $DISPLAY environment variable is on your system, go to the shell (ex: bash), and type the following command:
+//
+//	echo $DISPLAY
+//
+// You might see something such as:
+//
+//	:0
+//
+// Or:
+//
+//	:0.0
+//
+// Or (if you connecting into a machine via “ssh -X ...”) something such as:
+//
+//	93.184.216.34:12.0
+//
+//
+// $DISPLAY Environment Variable Format
 //
 // Although not necessary to know to use DisplayNetAddr, the $DISPLAY environment variable can appear in these format:
 //
