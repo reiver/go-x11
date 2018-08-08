@@ -374,7 +374,7 @@ var (
 // Interpretation
 //
 // If ‘host’ is left out, or it is “unix”, then then ‘network’ will be “unix”.
-// (I.e., a Unix domain socket used or IPC socket.)
+// (I.e., a Unix domain socket, which is also sometimes call an IPC socket.)
 //
 // Else, ‘host’ is interpreted as a domain name or an IP address.
 //
