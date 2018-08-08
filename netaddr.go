@@ -369,7 +369,7 @@ var (
 //	example.com:13.4528
 //
 //	example.com:32884.4528
-func DisplayNetAddr() (string, string, error) {
+func DisplayNetAddr() (net string, addr string, err error) {
 
 	envValue := os.Getenv(envKey)
 
