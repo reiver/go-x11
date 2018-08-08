@@ -18,9 +18,17 @@ var (
 // DisplayNetAddr retrieves the $DISPLAY environment variable, and returns the corresponding ‘network’ and ‘address’,
 // that could be used in a call to the "net" package's net.Dial() func, for the X11 client to connect to the X11 server.
 //
+//
+// X11 Clients Versus X11 Servers
+//
 // With X11, there are clients and servers.
 //
-// A X11 server is what displays images to the screen or monitor, and is communicating with the graphics hardware.
+// Most people (who work with X11) create X11 clients, as part of creating their application.
+//
+// (Most people have an X11 server already installed, and already running on their computer. The X11 server probably
+// came pre-installed on their computer. Or was installed when they installed their operating system.)
+//
+// An X11 server is what displays images to the screen or monitor, and is communicating with the graphics hardware.
 // There is usually only one X11 server runnig on a computer. And often the X11 server is automatically started when
 // the computer is started.
 //
@@ -30,6 +38,10 @@ var (
 //
 // With X11, before an X11 client connects to an X11 server, it looks at the $DISPLAY environment variable, to determine
 // where the server is.
+//
+// DisplayNetAddr would potentially be used by those creating an X11 client. (It is unlikely to be useful to an X11 server.)
+// Although most people using this package will probably not call DisplayNetAddr directly, and instead use x11.Dial().
+// (More on x11.Dial() shortly.)
 //
 //
 // Example Usage
